@@ -3,3 +3,21 @@
 
 #include "RuinGameModeBase.h"
 
+// Sets default values
+void ARuinGameModeBase::InitGameState()
+{
+	Super::InitGameState();
+
+	// Check if no hard override is active
+	if (DefaultPawnClass == ADefaultPawn::StaticClass())
+	{
+		// Update to custom implementaiton
+		DefaultPawnClass = MyPawnClass;
+	}
+	// Check if no hard override is active
+	if (PlayerControllerClass == APlayerController::StaticClass())
+	{
+		// Update to custom implementaiton
+		PlayerControllerClass = MyPlayerController;
+	}
+}
