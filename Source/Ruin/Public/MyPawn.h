@@ -30,6 +30,20 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 private:
+	// Movement vectors
+	FVector forceFB;
+	FVector forceLR;
+
+	// The multiplier to apply to the movement force
+	UPROPERTY(EditAnywhere, NoClear)
+	float MoveForceMultiplier = 10000.0f;
+	
+	// Move function
+	void MovePawnByForce();
+	// Generate movement vectors for left and right movement
+	void MoveFB(float Value);
+	void MoveLR(float Value);
+	
 	// Capsule component for collision
 	UPROPERTY(EditDefaultsOnly)
 	UCapsuleComponent* PlayerCapsule;
