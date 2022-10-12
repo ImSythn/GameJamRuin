@@ -40,28 +40,74 @@ void AMyPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 	PlayerInputComponent->BindAxis(TEXT("MoveFB"), this, &AMyPawn::MoveFB);
 	PlayerInputComponent->BindAxis(TEXT("MoveLR"), this, &AMyPawn::MoveLR);
+
+	PlayerInputComponent->BindAxis(TEXT("LookLR"), this, &AMyPawn::LookLR);
+	PlayerInputComponent->BindAxis(TEXT("LookUD"), this, &AMyPawn::LookUD);
+}
+
+FVector AMyPawn::GetNormalizedForce(const FVector& Vector)
+{
+	// Get the strength for direction
+	float Magnitude = Vector.Length();
+
+	// Check if already a unit vector, if so, no normalization is needed
+	if (Magnitude == 1.0f)
+	{
+		return Vector;
+	}
+
+	FVector NormalizedVector = ForceFB.GetSafeNormal();
+	return NormalizedVector * Magnitude;
 }
 
 void AMyPawn::MovePawnByForce()
 {
 	// Early out if no input is provided
-	if (forceFB == FVector::Zero() && forceLR == FVector::Zero())
+	if (ForceFB == 0.0f && ForceLR == 0.0f)
 		return;
 
+	// Calculate FB and LR move direction strength.
+	FVector NormalForceFB = GetNormalizedForce(ForceFB);
+	FVector NormalForceLR = GetNormalizedForce(ForceLR);
+	
 	// Combine forceFB and forceLR to create the final force vector and multiply it with MoveForceMultiplier
-	FVector force = FVector(forceFB + forceLR).GetSafeNormal() * MoveForceMultiplier;
+	FVector ReletiveMoveDirection = FVector(NormalForceFB + NormalForceLR).GetSafeNormal();
+	
+	UE_LOG(LogTemp, Warning, TEXT("MoveNormal: %s"), *ReletiveMoveDirection.ToString());
 
-	UE_LOG(LogTemp, Warning, TEXT("vector values: %s"), *force.ToString());
+	// Combine the look direction and the force
+	FVector MoveDirection = CurrentRotator.Vector() * MoveForceMultiplier;
+	
 	// Add force to the PlayerCapsule
-	PlayerCapsule->AddForce(force);
+	PlayerCapsule->AddForce(MoveDirection);
 }
 
 void AMyPawn::MoveFB(float Value)
 {
-	forceFB = FVector::ForwardVector * Value;
+	ForceFB = Value;
 }
 
 void AMyPawn::MoveLR(float Value)
 {
-	forceLR = FVector::LeftVector * Value;
+	ForceLR = Value;
+}
+
+void AMyPawn::LookLR(float Value)
+{
+	CurrentRotator = GetActorRotation();
+	float RotationToAdd = Value * HorizontalSensitivity;
+	FRotator NewRotation = CurrentRotator.Add(0, RotationToAdd, 0);
+	SetActorRotation(NewRotation);
+}
+
+void AMyPawn::LookUD(float Value)
+{
+	FRotator CameraRotator = PlayerCamera->GetComponentRotation();
+	float RotationToAdd = Value * VerticalSensitivity;
+	FRotator NewRotation = CameraRotator.Add(RotationToAdd, 0, 0);
+
+	NewRotation.Yaw = CurrentRotator.Yaw;
+	NewRotation.Roll = 0;
+
+	PlayerCamera->SetWorldRotation(NewRotation);
 }

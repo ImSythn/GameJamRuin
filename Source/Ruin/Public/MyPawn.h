@@ -30,19 +30,39 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 private:
-	// Movement vectors
-	FVector forceFB;
-	FVector forceLR;
+	/*
+	 * Look
+	 */
+	// The multiplier to apply to the look sensitivity
+	UPROPERTY(Category="Look", EditAnywhere, NoClear)
+	float HorizontalSensitivity = 1.0f;
+	UPROPERTY(Category="Look", EditAnywhere, NoClear)
+	float VerticalSensitivity = 1.0f;
 
-	// The multiplier to apply to the movement force
-	UPROPERTY(EditAnywhere, NoClear)
-	float MoveForceMultiplier = 10000.0f;
+	// Current rotator used for forward movement and keeping the camera oriented with pawn orientation. 
+	FRotator CurrentRotator;
 	
+	/*
+	 * Move
+	 */
+	// The multiplier to apply to the movement force
+	UPROPERTY(Category="Move", EditAnywhere, NoClear)
+	float MoveForceMultiplier = 100000.0f;
+
+	// Input force
+	float ForceFB;
+	float ForceLR;
+
+	FVector GetNormalizedForce(const FVector& Vector);
 	// Move function
 	void MovePawnByForce();
 	// Generate movement vectors for left and right movement
 	void MoveFB(float Value);
 	void MoveLR(float Value);
+	// rotate around Z axis of capsule to look left and right 
+	void LookLR(float Value);
+	// rotate around Y axis of camera to look up and down
+	void LookUD(float Value);
 	
 	// Capsule component for collision
 	UPROPERTY(EditDefaultsOnly)
