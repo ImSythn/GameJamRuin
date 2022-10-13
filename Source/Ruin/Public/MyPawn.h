@@ -50,10 +50,11 @@ private:
 	float MoveForceMultiplier = 100000.0f;
 
 	// Input force
-	float ForceFB;
-	float ForceLR;
+	float InputForceFB;
+	float InputForceLR;
 
-	FVector GetNormalizedForce(const FVector& Vector);
+	// Normalizes
+	FVector GetInputVector();
 	// Move function
 	void MovePawnByForce();
 	// Generate movement vectors for left and right movement

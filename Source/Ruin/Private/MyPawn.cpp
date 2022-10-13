@@ -4,6 +4,7 @@
 #include "MyPawn.h"
 
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/KismetMathLibrary.h"
 
 // Sets default values
 AMyPawn::AMyPawn()
@@ -45,51 +46,49 @@ void AMyPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAxis(TEXT("LookUD"), this, &AMyPawn::LookUD);
 }
 
-FVector AMyPawn::GetNormalizedForce(const FVector& Vector)
+FVector AMyPawn::GetInputVector()
 {
-	// Get the strength for direction
-	float Magnitude = Vector.Length();
-
-	// Check if already a unit vector, if so, no normalization is needed
-	if (Magnitude == 1.0f)
+	// Unrefined input vector
+	FVector InputVector = FVector(InputForceFB,InputForceLR,0);
+	
+	// Check if input vector is bigger than a unit vector, if so, normalization is needed
+	if (InputVector.Length() > 1.0f)
 	{
-		return Vector;
+		// Normalize input vector
+		return InputVector.GetSafeNormal();
 	}
-
-	FVector NormalizedVector = ForceFB.GetSafeNormal();
-	return NormalizedVector * Magnitude;
+	
+	return InputVector;
 }
 
 void AMyPawn::MovePawnByForce()
 {
 	// Early out if no input is provided
-	if (ForceFB == 0.0f && ForceLR == 0.0f)
+	if (InputForceFB == 0.0f && InputForceLR == 0.0f)
 		return;
 
 	// Calculate FB and LR move direction strength.
-	FVector NormalForceFB = GetNormalizedForce(ForceFB);
-	FVector NormalForceLR = GetNormalizedForce(ForceLR);
-	
-	// Combine forceFB and forceLR to create the final force vector and multiply it with MoveForceMultiplier
-	FVector ReletiveMoveDirection = FVector(NormalForceFB + NormalForceLR).GetSafeNormal();
-	
-	UE_LOG(LogTemp, Warning, TEXT("MoveNormal: %s"), *ReletiveMoveDirection.ToString());
+	FVector InputVector = GetInputVector();
+		
+	UE_LOG(LogTemp, Warning, TEXT("MoveNormal: %s"), *InputVector.ToString());
 
 	// Combine the look direction and the force
-	FVector MoveDirection = CurrentRotator.Vector() * MoveForceMultiplier;
+	FVector MoveForceVector = InputVector * MoveForceMultiplier;
+
+	FVector RelativeForceVector = UKismetMathLibrary::TransformDirection(GetActorTransform(), MoveForceVector);
 	
 	// Add force to the PlayerCapsule
-	PlayerCapsule->AddForce(MoveDirection);
+	PlayerCapsule->AddForce(RelativeForceVector);
 }
 
 void AMyPawn::MoveFB(float Value)
 {
-	ForceFB = Value;
+	InputForceFB = Value;
 }
 
 void AMyPawn::MoveLR(float Value)
 {
-	ForceLR = Value;
+	InputForceLR = Value;
 }
 
 void AMyPawn::LookLR(float Value)
