@@ -3,9 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
-
 #include "GameFramework/Character.h"
-
+#include "PaperCharacter.h"
 #include "RuinCharacter.generated.h"
 
 class USoundCue;
@@ -19,7 +18,7 @@ inline float SimpleSpline(float Value)
 }
 
 UCLASS(config = Game)
-class RUIN_API ARuinCharacter : public ACharacter
+class RUIN_API ARuinCharacter : public APaperCharacter
 {
 	GENERATED_BODY()
 

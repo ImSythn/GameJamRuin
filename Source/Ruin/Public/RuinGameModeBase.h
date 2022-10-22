@@ -6,9 +6,6 @@
 #include "GameFramework/GameModeBase.h"
 #include "GameFramework/DefaultPawn.h"
 
-#include "MyPawn.h"
-#include "MyPlayerController.h"
-
 #include "RuinGameModeBase.generated.h"
 
 /**
