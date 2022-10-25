@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "RuinCharacter.h"
 #include "GameFramework/PlayerController.h"
 #include "RuinPlayerController.generated.h"
 
@@ -15,7 +16,9 @@ class RUIN_API ARuinPlayerController : public APlayerController
 	GENERATED_BODY()
 	
 public:
-	ACharacter* PlayerCharacter;
+	UPROPERTY()
+	TObjectPtr<ARuinCharacter> PossessedRuinCharacter;
+	
 	virtual void SetupInputComponent() override;
 	virtual void OnPossess(APawn* InPawn) override;
 	

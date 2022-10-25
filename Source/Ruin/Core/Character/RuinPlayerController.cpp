@@ -6,11 +6,16 @@
 #include "RuinCharacter.h"
 #include "GameFramework/Character.h"
 #include "Kismet/GameplayStatics.h"
+#include "Ruin/LogCategories.h"
 
 void ARuinPlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
 
+	// If no valid character is possessed, don't bind input components.
+	if (!PossessedRuinCharacter)
+		return;
+	
 	InputComponent->BindAxis("MoveForward", this, &ARuinPlayerController::MoveForwardCallback);
 	InputComponent->BindAxis("MoveRight", this, &ARuinPlayerController::MoveRightCallback);
 	InputComponent->BindAxis("LookUp", this, &ARuinPlayerController::LookUpCallback);
@@ -26,45 +31,63 @@ void ARuinPlayerController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
 	
-	PlayerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(),0);
+	// Check if possessed pawn is of type ARuinCharacter, if not UnPossess this pawn
+	if (ARuinCharacter* DerivedPawn = dynamic_cast<ARuinCharacter*>(InPawn))
+	{
+		PossessedRuinCharacter = DerivedPawn;
+		SetupInputComponent();
+	}
+	else
+	{
+		UE_LOG(LogCharacter, Warning, TEXT("Cannot possess character of type: \"APawn\""));
+		UnPossess();
+	}
 }
 
 void ARuinPlayerController::MoveForwardCallback(float AxisValue)
 {
-	PlayerCharacter->AddMovementInput(PlayerCharacter->GetActorForwardVector(), AxisValue);
+	//if (PossessedRuinCharacter)
+	PossessedRuinCharacter->AddMovementInput(PossessedRuinCharacter->GetActorForwardVector(), AxisValue);
 }
 
 void ARuinPlayerController::MoveRightCallback(float AxisValue)
 {
-	PlayerCharacter->AddMovementInput(PlayerCharacter->GetActorRightVector(), AxisValue);
+	//if (PossessedRuinCharacter)
+	PossessedRuinCharacter->AddMovementInput(PossessedRuinCharacter->GetActorRightVector(), AxisValue);
 }
 
 void ARuinPlayerController::LookUpCallback(float AxisValue)
 {
-	PlayerCharacter->AddControllerPitchInput(AxisValue);
+	//if (PossessedRuinCharacter)
+	PossessedRuinCharacter->AddControllerPitchInput(AxisValue);
 }
 
 void ARuinPlayerController::TurnCallback(float AxisValue)
 {
-	PlayerCharacter->AddControllerYawInput(AxisValue);
+	//if (PossessedRuinCharacter)
+	PossessedRuinCharacter->AddControllerYawInput(AxisValue);
 }
 
 void ARuinPlayerController::JumpCallback()
 {
-	PlayerCharacter->Jump();
+	//if (PossessedRuinCharacter)
+	PossessedRuinCharacter->Jump();
 }
 
 void ARuinPlayerController::StopJumpCallback()
 {
-	PlayerCharacter->StopJumping();
+	//if (PossessedRuinCharacter)
+	PossessedRuinCharacter->StopJumping();
 }
 
 void ARuinPlayerController::CrouchCallback()
 {
-	PlayerCharacter->Crouch();
+	//if (PossessedRuinCharacter)
+	PossessedRuinCharacter->Crouch();
 }
 
 void ARuinPlayerController::UnCrouchCallback()
 {
-	PlayerCharacter->UnCrouch();
+	//if (PossessedRuinCharacter)
+	PossessedRuinCharacter->UnCrouch();
 }

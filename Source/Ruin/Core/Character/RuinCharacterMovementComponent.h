@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "RuinCharacter.h"
 
 #include "GameFramework/CharacterMovementComponent.h"
 
@@ -79,7 +80,8 @@ protected:
 	bool bInCrouch;
 
 	/** The PB player character */
-	class ARuinCharacter* RuinCharacter;
+	UPROPERTY()
+	TObjectPtr<ARuinCharacter> RuinCharacter;
 
 	/** The target ground speed when running. */
 	UPROPERTY(Category = "Character Movement: Walking", EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "0", UIMin = "0"))
@@ -138,18 +140,18 @@ public:
 	URuinCharacterMovementComponent();
 
 	virtual void InitializeComponent() override;
-	void OnRegister() override;
+	virtual void OnRegister() override;
 
 	// Overrides for Source-like movement
-	void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	virtual void CalcVelocity(float DeltaTime, float Friction, bool bFluid, float BrakingDeceleration) override;
 	virtual void ApplyVelocityBraking(float DeltaTime, float Friction, float BrakingDeceleration) override;
-	void PhysFalling(float deltaTime, int32 Iterations);
-	bool ShouldLimitAirControl(float DeltaTime, const FVector& FallAcceleration) const override;
-	FVector NewFallVelocity(const FVector& InitialVelocity, const FVector& Gravity, float DeltaTime) const override;
+	virtual void PhysFalling(float DeltaTime, int32 Iterations) override;
+	virtual bool ShouldLimitAirControl(float DeltaTime, const FVector& FallAcceleration) const override;
+	virtual FVector NewFallVelocity(const FVector& InitialVelocity, const FVector& Gravity, float DeltaTime) const override;
 
-	void UpdateCharacterStateBeforeMovement(float DeltaSeconds) override;
-	void UpdateCharacterStateAfterMovement(float DeltaSeconds) override;
+	virtual void UpdateCharacterStateBeforeMovement(float DeltaSeconds) override;
+	virtual void UpdateCharacterStateAfterMovement(float DeltaSeconds) override;
 
 	void UpdateSurfaceFriction(bool bIsSliding = false);
 	void UpdateCrouching(float DeltaTime, bool bOnlyUnCrouch = false);
@@ -164,14 +166,14 @@ public:
 	bool CanAttemptJump() const override;
 	bool DoJump(bool bClientSimulation) override;
 
-	void TwoWallAdjust(FVector& OutDelta, const FHitResult& Hit, const FVector& OldHitNormal) const override;
-	float SlideAlongSurface(const FVector& Delta, float Time, const FVector& Normal, FHitResult& Hit, bool bHandleImpact = false) override;
-	FVector ComputeSlideVector(const FVector& Delta, const float Time, const FVector& Normal, const FHitResult& Hit) const override;
-	FVector HandleSlopeBoosting(const FVector& SlideResult, const FVector& Delta, const float Time, const FVector& Normal, const FHitResult& Hit) const override;
-	bool ShouldCatchAir(const FFindFloorResult& OldFloor, const FFindFloorResult& NewFloor) override;
-	bool IsWithinEdgeTolerance(const FVector& CapsuleLocation, const FVector& TestImpactPoint, const float CapsuleRadius) const override;
-	bool IsValidLandingSpot(const FVector& CapsuleLocation, const FHitResult& Hit) const override;
-	bool ShouldCheckForValidLandingSpot(float DeltaTime, const FVector& Delta, const FHitResult& Hit) const override;
+	virtual void TwoWallAdjust(FVector& OutDelta, const FHitResult& Hit, const FVector& OldHitNormal) const override;
+	virtual float SlideAlongSurface(const FVector& Delta, float Time, const FVector& Normal, FHitResult& Hit, bool bHandleImpact = false) override;
+	virtual FVector ComputeSlideVector(const FVector& Delta, const float Time, const FVector& Normal, const FHitResult& Hit) const override;
+	virtual FVector HandleSlopeBoosting(const FVector& SlideResult, const FVector& Delta, const float Time, const FVector& Normal, const FHitResult& Hit) const override;
+	virtual bool ShouldCatchAir(const FFindFloorResult& OldFloor, const FFindFloorResult& NewFloor) override;
+	virtual bool IsWithinEdgeTolerance(const FVector& CapsuleLocation, const FVector& TestImpactPoint, const float CapsuleRadius) const override;
+	virtual bool IsValidLandingSpot(const FVector& CapsuleLocation, const FHitResult& Hit) const override;
+	virtual bool ShouldCheckForValidLandingSpot(float DeltaTime, const FVector& Delta, const FHitResult& Hit) const override;
 
 	void TraceCharacterFloor(FHitResult& OutHit);
 
@@ -188,7 +190,7 @@ public:
 		return bOnLadder;
 	}
 
-	virtual void OnMovementModeChanged(EMovementMode PreviousMovementMode, uint8 PreviousCustomMode);
+	virtual void OnMovementModeChanged(EMovementMode PreviousMovementMode, uint8 PreviousCustomMode) override;
 
 	/** Do camera roll effect based on velocity */
 	float GetCameraRoll();
