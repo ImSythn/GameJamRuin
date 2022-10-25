@@ -1,2 +1,1 @@
-# GameJamRuin
-FPS 48h Game Jam 
+FPS ARPG in EU5
