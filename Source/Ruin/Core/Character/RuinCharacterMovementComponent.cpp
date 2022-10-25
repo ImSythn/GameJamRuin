@@ -1,7 +1,7 @@
 // Permission to use, copy, modify, and/or distribute this software for any purpose with or without fee is hereby granted.
 
 
-#include "Ruin/Core/Characters/Public/RuinCharacterMovementComponent.h"
+#include "Ruin/Core/Character/RuinCharacterMovementComponent.h"
 
 #include "Components/CapsuleComponent.h"
 #include "Engine/Engine.h"
@@ -13,8 +13,8 @@
 #include "PhysicsEngine/PhysicsSettings.h"
 #include "Sound/SoundCue.h"
 
-#include "Ruin/Core/Sound/Public/RuinMoveStepSound.h"
-#include "Ruin/Core/Characters/Public/RuinCharacter.h"
+#include "Ruin/Core/Sound/RuinMoveStepSound.h"
+#include "Ruin/Core/Character/RuinCharacter.h"
 
 static TAutoConsoleVariable<int32> CVarShowPos(TEXT("cl.ShowPos"), 0, TEXT("Show position and movement information.\n"), ECVF_Default);
 

@@ -1,12 +1,12 @@
 // Permission to use, copy, modify, and/or distribute this software for any purpose with or without fee is hereby granted.
 
 
-#include "Ruin/Core/Characters/Public/RuinCharacter.h"
+#include "Ruin/Core/Character/RuinCharacter.h"
 
 #include "Components/CapsuleComponent.h"
 #include "HAL/IConsoleManager.h"
 
-#include "Ruin/Core/Characters/Public/RuinCharacterMovementComponent.h"
+#include "Ruin/Core/Character/RuinCharacterMovementComponent.h"
 
 static TAutoConsoleVariable<int32> CVarAutoBHop(TEXT("move.Pogo"), 1, TEXT("If holding spacebar should make the player jump whenever possible.\n"), ECVF_Default);
 
