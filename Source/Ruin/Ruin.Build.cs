@@ -19,11 +19,12 @@ public class Ruin : ModuleRules
 			"EditorScriptingUtilities"
 		});
 		
-		//PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "UMG", "Paper2D" });  
-
 		PrivateDependencyModuleNames.AddRange(new string[]
 		{
 			"PhysicsCore",
+			"OnlineSubsystem",
+			"OnlineSubsystemNull",
+			"OnlineSubsystemSteam"
 		});
 
 		// Uncomment if you are using Slate UI
